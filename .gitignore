@@ -33,6 +33,5 @@ yarn.lock
 /playwright/.cache/
 
 .env
-/ssl
 *.zip
 /unpackage
