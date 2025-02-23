@@ -35,3 +35,4 @@ yarn.lock
 .env
 *.zip
 /unpackage
+/v2-demo
