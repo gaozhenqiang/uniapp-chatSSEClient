@@ -6,6 +6,10 @@
 
 点击右上角 `下载插件并导入HBuilderX`
 
+uniapp插件地址：https://ext.dcloud.net.cn/plugin?id=20971
+
+或者你可以参考我的示例
+
 ### 示例代码
 
 ```javascript
