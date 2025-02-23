@@ -103,7 +103,7 @@ const stop = () => {
 
 本插件依赖于 `fetch-event-source` 库，将编辑后的js集成，因为我修改了原来库解析的逻辑，使其更适用于中国宝宝体质。
 
-如果这个组件解决了你的问题，麻烦去github帮我点个赞，谢谢大家
+如果这个组件解决了你的问题，麻烦去[github](https://github.com/gaozhenqiang/uniapp-chatSSEClient/) 帮我点个赞，谢谢大家
 
 有新需求或者bug可以在github上提issues，或者加我q `1933669775`
 
