@@ -49,19 +49,19 @@ export default {
         responseType: 'arraybuffer',
         success: (res) => {},
         fail: (error) => {
-          this.$emit("onError", error)
+          this.$emit("onInnerError", error)
         },
         complete: () => {
-          this.$emit("onFinish")
+          this.$emit("onInnerFinish")
         },
       });
 
       requestTask.onChunkReceived(this.listener)
-      this.$emit("onOpen")
+      this.$emit("onInnerOpen")
     },
 
     listener(data) {
-      this.$emit("onMessage", this.decode(data.data))
+      this.$emit("onInnerMessage", this.decode(data.data))
     },
   },
 }

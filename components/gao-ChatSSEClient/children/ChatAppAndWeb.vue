@@ -31,16 +31,16 @@ export default {
     },
 
     open() {
-      this.$emit("onOpen")
+      this.$emit("onInnerOpen")
     },
     message(msg) {
-      this.$emit("onMessage", msg)
+      this.$emit("onInnerMessage", msg)
     },
     error(err) {
-      this.$emit("onError", err)
+      this.$emit("onInnerError", err)
     },
     finish() {
-      this.$emit("onFinish")
+      this.$emit("onInnerFinish")
     }
   },
 }

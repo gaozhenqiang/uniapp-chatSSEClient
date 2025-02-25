@@ -2,20 +2,20 @@
   <!--  #ifdef MP-WEIXIN-->
   <ChatWxApplet
     ref="chatRef"
-    @onOpen="open"
-    @onError="error"
-    @onMessage="message"
-    @onFinish="finish"
+    @onInnerOpen="open"
+    @onInnerError="error"
+    @onInnerMessage="message"
+    @onInnerFinish="finish"
   />
   <!--  #endif-->
 
   <!--  #ifdef APP-PLUS || H5-->
   <ChatAppAndWeb
     ref="chatRef"
-    @onOpen="open"
-    @onError="error"
-    @onMessage="message"
-    @onFinish="finish"
+    @onInnerOpen="open"
+    @onInnerError="error"
+    @onInnerMessage="message"
+    @onInnerFinish="finish"
   />
   <!--  #endif-->
 </template>
