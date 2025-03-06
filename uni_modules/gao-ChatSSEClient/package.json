@@ -1,0 +1,65 @@
+{
+    "id": "gao-ChatSSEClient",
+    "name": "sse 客户端组件，支持兼容：v2、v3、安卓、ios、浏览器、微信小程序",
+    "displayName": "sse 客户端组件，支持兼容：v2、v3、安卓、ios、浏览器、微信小程序",
+    "version": "1.3.0",
+    "description": "sse 客户端组件，支持兼容：v2、v3、安卓、ios、浏览器、微信小程序",
+    "repository": "https://github.com/gaozhenqiang/uniapp-chatSSEClient",
+    "keywords": [
+        "sse",
+        "chat",
+        "微信小程序sse",
+        "流式接口",
+        "流式输出"
+    ],
+    "dcloudext": {
+        "declaration": {
+            "ads": "无",
+            "data": "插件不采集任何数据",
+            "permissions": "无"
+        },
+        "contact": {
+            "qq": "1933669775"
+        },
+        "type": "component-vue",
+        "sale": {
+            "regular": {
+                "price": "0.00"
+            },
+            "sourcecode": {
+                "price": "0.00"
+            }
+        }
+    },
+    "uni_modules": {
+        "platforms": {
+            "client": {
+                "Vue": {
+                    "vue2": "y",
+                    "vue3": "y"
+                },
+                "App": {
+                    "app-vue": "y",
+                    "app-harmony": "u",
+                    "app-nvue": "u",
+                    "app-uvue": "u"
+                },
+                "H5-mobile": {
+                    "Safari": "y",
+                    "Android Browser": "y",
+                    "微信浏览器(Android)": "y",
+                    "QQ浏览器(Android)": "y"
+                },
+                "H5-pc": {
+                    "Chrome": "y",
+                    "Edge": "y",
+                    "Firefox": "y",
+                    "Safari": "y"
+                },
+                "小程序": {
+                    "微信": "y"
+                }
+            }
+        }
+    }
+}

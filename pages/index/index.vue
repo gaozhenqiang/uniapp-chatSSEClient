@@ -1,11 +1,4 @@
 <template>
-  <ChatSSEClient
-    ref="chatSSEClientRef"
-    @onOpen="openCore"
-    @onError="errorCore"
-    @onMessage="messageCore"
-    @onFinish="finishCore"
-  />
   <button @click="start">开始</button>
   <button @click="stop">停止</button>
   <template v-if="loading">
@@ -16,10 +9,17 @@
   <view>
     {{ responseText }}
   </view>
+
+  <gao-ChatSSEClient
+    ref="chatSSEClientRef"
+    @onOpen="openCore"
+    @onError="errorCore"
+    @onMessage="messageCore"
+    @onFinish="finishCore"
+  />
 </template>
 
 <script setup>
-import ChatSSEClient from "../../components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
 import { ref } from 'vue'
 
 const chatSSEClientRef = ref(null);
