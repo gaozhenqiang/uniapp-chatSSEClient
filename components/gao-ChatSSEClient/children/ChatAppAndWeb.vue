@@ -7,7 +7,8 @@ export default {
       renderjsData: {
         url: "",
         key: 0,
-        body: ""
+        body: "",
+        method: ""
       }
     }
   },
@@ -17,16 +18,13 @@ export default {
     },
     /**
      * 开始chat对话
-     * @param body
-     * @param url
-     * @param headers
      */
-    startChat({body, url, headers = {}}) {
+    startChat(config) {
+      const { body } = config;
       this.renderjsData = Object.assign({}, this.renderjsData, {
         key: this.renderjsData.key + 1,
-        body: body ? JSON.stringify(body) : '',
-        url: url,
-        headers
+        ...config,
+        body: body ? JSON.stringify(body) : undefined,
       });
     },
 
@@ -66,7 +64,7 @@ export default {
 		/**
 		 * 开始对话
 		 */
-		startChatCore({ url, body, headers }) {
+		startChatCore({ url, body, headers, method }) {
 			if (!url) return;
 			try {
 				this.ctrl = new AbortController();
@@ -74,7 +72,7 @@ export default {
 					url,
 					{
 					readJson: true,
-						method: 'POST',
+						method,
             openWhenHidden: true,
 						signal: this.ctrl.signal,
 						headers: {

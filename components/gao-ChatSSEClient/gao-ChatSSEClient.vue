@@ -41,8 +41,10 @@ export default {
   },
 
   methods: {
-    startChat(...args) {
-      this.$refs['chatRef'].startChat(...args);
+    startChat(config) {
+      config['method'] = (config['method'] || 'post').toUpperCase();
+      config['headers'] = config['headers'] || {};
+      this.$refs['chatRef'].startChat(config);
     },
 
     stopChat(...args) {

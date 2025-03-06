@@ -15,11 +15,11 @@ uniapp插件地址：https://ext.dcloud.net.cn/plugin?id=20971
 ```javascript
 <template>
   <ChatSSEClient
-      ref="chatSSEClientRef"
-      @onOpen="openCore"
-      @onError="errorCore"
-      @onMessage="messageCore"
-      @onFinish="finishCore"
+    ref="chatSSEClientRef"
+    @onOpen="openCore"
+    @onError="errorCore"
+    @onMessage="messageCore"
+    @onFinish="finishCore"
   />
   <button @click="start">开始</button>
   <button @click="stop">停止</button>
@@ -34,7 +34,7 @@ uniapp插件地址：https://ext.dcloud.net.cn/plugin?id=20971
 </template>
 
 <script setup>
-import ChatSSEClient from "@/components/ChatSSEClient.vue";
+import ChatSSEClient from "../../components/gao-ChatSSEClient/gao-ChatSSEClient.vue";
 import { ref } from 'vue'
 
 const chatSSEClientRef = ref(null);
@@ -64,23 +64,22 @@ const start = () => {
   openLoading.value = true;
   loading.value = true;
   responseText.value = "";
+
   chatSSEClientRef.value.startChat({
     // 将它换成你的地址
-    url: "",
+    url: import.meta.env.VITE_CHAT_URL,
+    // 请求头
     headers: {
-      authorization: "",
+      Authorization: import.meta.env.VITE_CHAT_AUTHORIZATION,
     },
+    // 默认为 post
+    method: 'post',
     body: {
-      "messages":[
-        { "role":"user", "content": "你好！" }
-      ],
       "stream":true,
-      "model":"deepseek-chat",
-      "temperature":1,
-      "presence_penalty":0,
-      "frequency_penalty":0,
-      "top_p":1
-    },
+      "model": "deepseek-chat",
+      "messages": [
+        {"role": "system", "content": "你是来自艺咖科技的数字员工，你的名字叫小咖。"}]
+    }
   })
 }
 const stop = () => {

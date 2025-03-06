@@ -53,9 +53,12 @@ const start = () => {
   chatSSEClientRef.value.startChat({
     // 将它换成你的地址
     url: import.meta.env.VITE_CHAT_URL,
+    // 请求头
     headers: {
       Authorization: import.meta.env.VITE_CHAT_AUTHORIZATION,
     },
+    // 默认为 post
+    method: 'post',
     body: {
       "stream":true,
       "model": "deepseek-chat",

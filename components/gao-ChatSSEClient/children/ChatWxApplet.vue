@@ -35,11 +35,12 @@ export default {
      * @param body
      * @param url
      * @param headers
+     * @param method
      */
-    startChat({body, url, headers = {}}) {
+    startChat({ body, url, headers, method }) {
       requestTask = uni.request({
         url: url,
-        method: 'POST',
+        method,
         header: {
           Accept: 'text/event-stream',
           ...headers,
