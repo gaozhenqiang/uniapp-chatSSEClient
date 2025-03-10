@@ -24,7 +24,7 @@ export default {
       this.renderjsData = Object.assign({}, this.renderjsData, {
         key: this.renderjsData.key + 1,
         ...config,
-        body: body ? JSON.stringify(body) : undefined,
+        body: body ? JSON.stringify(body) : 0,
       });
     },
 
@@ -79,7 +79,7 @@ export default {
 							"Content-Type": "application/json",
 							...headers,
 						},
-						body: body,
+						body: body ? body : undefined,
 						onopen: () => {
 							this.$ownerInstance.callMethod('open');
 						},
@@ -93,6 +93,7 @@ export default {
 					}).then(() => {
 						this.$ownerInstance.callMethod('finish');
 				}).catch(err => {
+          console.log(err)
 					this.$ownerInstance.callMethod('error', err);
 				})
 			} catch (e) {
