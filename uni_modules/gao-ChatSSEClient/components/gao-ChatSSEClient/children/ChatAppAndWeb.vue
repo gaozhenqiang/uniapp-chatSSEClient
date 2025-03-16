@@ -36,6 +36,7 @@ export default {
     },
     error(err) {
       this.$emit("onInnerError", err)
+      this.stopChat();
     },
     finish() {
       this.$emit("onInnerFinish")

@@ -91,14 +91,23 @@ const stop = () => {
 
 # 温馨提示
 
+示例项目根目录的`sse-server.js`文件提供了一个简单的sse测试服务，使用 `node sse-server.js`运行
+
+**提出问题之前请先确保你的接口没有问题**
+
+---
 
 **请仔细阅读我提供的示例代码。**
 
 **如果你的程序有问题请先下载我提供的示例项目调试！**
 
+---
+
 如果想了解原理请看我掘金的文章： [点击前往](https://juejin.cn/post/7435632766375084082)
 
 本插件依赖于 `fetch-event-source` 库，将编辑后的js集成，因为我修改了原来库解析的逻辑，使其更适用于中国宝宝体质。
+
+---
 
 **如果这个组件解决了你的问题，麻烦去[github](https://github.com/gaozhenqiang/uniapp-chatSSEClient/) 帮我点个赞，谢谢大家**
 

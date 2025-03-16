@@ -52,7 +52,7 @@ const start = () => {
 
   chatSSEClientRef.value.startChat({
     // 将它换成你的地址
-    url: import.meta.env.VITE_CHAT_URL,
+    url: import.meta.env.VITE_CHAT_URL || 'http://localhost:3000/sse',
     // 请求头
     headers: {
       Authorization: import.meta.env.VITE_CHAT_AUTHORIZATION,
