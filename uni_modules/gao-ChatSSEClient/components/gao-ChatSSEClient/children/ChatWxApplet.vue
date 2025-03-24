@@ -1,4 +1,6 @@
 <script>
+import { parseSseData } from "../utils";
+
 let requestTask;
 export default {
   props: {},
@@ -61,8 +63,12 @@ export default {
       this.$emit("onInnerOpen")
     },
 
-    listener(data) {
-      this.$emit("onInnerMessage", this.decode(data.data))
+    listener({ data }) {
+      const msg = this.decode(data);
+      const lines = parseSseData(msg);
+      for (const line of lines) {
+        this.$emit("onInnerMessage", line)
+      }
     },
   },
 }
