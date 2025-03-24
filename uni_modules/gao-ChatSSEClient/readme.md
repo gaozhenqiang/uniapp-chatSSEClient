@@ -117,9 +117,6 @@ const stop = () => {
 
 有新需求或者bug可以在github上提issues，或者加我q `1933669775`
 
-已知的需求有（我抽空会加上的）：
-1. 微信小程序会一次返回多条数据连在一起，这是因为没有解析数据的问题，h5端也有这种问题，只是`fetch-event-source`帮我们处理了。
-
 # 常见问题
 
 ## ios报错：TypeError: Load failed
