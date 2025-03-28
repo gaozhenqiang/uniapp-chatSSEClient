@@ -42,9 +42,9 @@ const responseText = ref("");
 const loading = ref(false);
 const openLoading = ref(false);
 
-const openCore = () => {
+const openCore = (response) => {
   openLoading.value = false;
-  console.log("open sse");
+  console.log("open sse：", response);
 }
 const errorCore = (err) => {
   console.log("error sse：", err);
