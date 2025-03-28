@@ -28,14 +28,14 @@ export default {
       });
     },
 
-    open() {
-      this.$emit("onInnerOpen")
+    open(...args) {
+      this.$emit("onInnerOpen", ...args)
     },
     message(msg) {
       this.$emit("onInnerMessage", msg)
     },
-    error(err) {
-      this.$emit("onInnerError", err)
+    error(...args) {
+      this.$emit("onInnerError", ...args)
       this.stopChat();
     },
     finish() {
@@ -55,6 +55,17 @@ export default {
 		}
 	},
 	methods: {
+    objToJson(obj) {
+      const json = {};
+      for (const key in obj) {
+        const val = obj[key];
+        if (typeof val === "string" || typeof val === 'number' || typeof val === 'boolean') {
+          json[key] = val;
+        }
+      }
+      return json;
+    },
+
 		/**
 		 * 停止生成
 		 */
@@ -81,15 +92,15 @@ export default {
 							...headers,
 						},
 						body: body ? body : undefined,
-						onopen: () => {
-							this.$ownerInstance.callMethod('open');
+						onopen: (response) => {
+							this.$ownerInstance.callMethod('open', this.objToJson(response));
 						},
 						onmessage: ({ data }) => {
 							this.$ownerInstance.callMethod('message', data);
 						},
 						onerror: (err) => {
               console.log(err)
-							this.$ownerInstance.callMethod('error', err);
+							this.$ownerInstance.callMethod('error', JSON.stringify(err));
 						},
 					}).then(() => {
 						this.$ownerInstance.callMethod('finish');

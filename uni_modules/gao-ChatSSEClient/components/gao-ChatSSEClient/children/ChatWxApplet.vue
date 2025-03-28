@@ -60,7 +60,7 @@ export default {
       });
 
       requestTask.onChunkReceived(this.listener)
-      this.$emit("onInnerOpen")
+      this.$emit("onInnerOpen", requestTask)
     },
 
     listener({ data }) {

@@ -51,14 +51,14 @@ export default {
       this.$refs['chatRef'].stopChat(...args);
     },
 
-    open() {
-      this.$emit("onOpen")
+    open(...args) {
+      this.$emit("onOpen", ...args)
     },
     message(msg) {
       this.$emit("onMessage", msg)
     },
-    error(err) {
-      this.$emit("onError", err)
+    error(...args) {
+      this.$emit("onError", ...args)
     },
     finish() {
       this.$emit("onFinish")
