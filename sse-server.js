@@ -27,7 +27,9 @@ function handleSSE(req, res) {
   const intervalId = setInterval(() => {
     counter++;
     // 发送事件数据
-    res.write(`data: message ${counter}\n\n`);
+    res.write("event: connecttime\n")
+    res.write(`data: message${counter}\n`)
+    res.write(`id: ${counter}\n\n`)
 
     // 如果计数器超过10，停止发送
     if (counter >= 10) {

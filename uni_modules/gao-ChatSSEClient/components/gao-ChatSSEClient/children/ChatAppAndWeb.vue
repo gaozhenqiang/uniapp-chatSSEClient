@@ -95,7 +95,7 @@ export default {
 						onopen: (response) => {
 							this.$ownerInstance.callMethod('open', this.objToJson(response));
 						},
-						onmessage: ({ data }) => {
+						onmessage: (data) => {
 							this.$ownerInstance.callMethod('message', data);
 						},
 						onerror: (err) => {

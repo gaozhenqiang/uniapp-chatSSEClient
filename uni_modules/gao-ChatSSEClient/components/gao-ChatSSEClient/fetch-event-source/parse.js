@@ -61,7 +61,20 @@ export function getLines(onLine) {
 }
 export function getMessages(onId, onRetry, onMessage) {
     let message = newMessage();
-    const decoder = new TextDecoder();
+    let decoder;
+
+    // #ifdef MP-WEIXIN
+    decoder = {
+        decode(arraybuffer) {
+            return decodeURIComponent(escape(String.fromCharCode(...arraybuffer)))
+        }
+    };
+    // #endif
+
+    // #ifdef APP-PLUS || H5
+    decoder = new TextDecoder();
+    // #endif
+
     return function onLine(line, fieldLength) {
         if (line.length === 0) {
             onMessage === null || onMessage === void 0 ? void 0 : onMessage(message);

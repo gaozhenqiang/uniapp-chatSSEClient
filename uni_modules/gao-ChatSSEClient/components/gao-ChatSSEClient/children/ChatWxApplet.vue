@@ -1,12 +1,19 @@
 <script>
-import { parseSseData } from "../utils";
+import {getLines, getMessages} from "../fetch-event-source/parse"
 
 let requestTask;
 export default {
   props: {},
   data() {
     return {
+      onChunk: undefined
     }
+  },
+  mounted() {
+    const onLine = getMessages(() => {}, () => {}, (line) => {
+      this.$emit("onInnerMessage", line)
+    })
+    this.onChunk = getLines(onLine);
   },
   methods: {
     stopChat() {
@@ -15,21 +22,7 @@ export default {
     },
 
     decode(data) {
-      if(typeof data === 'string') {
-        return data;
-      }
-      let txt;
-      // 进行判断返回的对象是Uint8Array（开发者工具）或者ArrayBuffer（真机）
-      // 1.获取对象的准确的类型
-      const type = Object.prototype.toString.call(data); // Uni8Array的原型对象被更改了所以使用字符串的信息进行判断。
-      if(type ==="[object Uint8Array]"){
-        txt = decodeURIComponent(escape(String.fromCharCode(...data)))
-      }else if(data instanceof ArrayBuffer){
-        // 将ArrayBuffer转换为Uint8Array
-        const uint8Array = new Uint8Array(data);
-        txt=decodeURIComponent(escape(String.fromCharCode(...uint8Array)))
-      }
-      return txt;
+      return decodeURIComponent(escape(String.fromCharCode(...data)));
     },
 
     /**
@@ -64,11 +57,12 @@ export default {
     },
 
     listener({ data }) {
-      const msg = this.decode(data);
-      const lines = parseSseData(msg);
-      for (const line of lines) {
-        this.$emit("onInnerMessage", line)
+      const type = Object.prototype.toString.call(data);
+      if (type ==="[object Uint8Array]") {
+      } else if (data instanceof ArrayBuffer) {
+        data = new Uint8Array(data);
       }
+      this.onChunk(data)
     },
   },
 }
