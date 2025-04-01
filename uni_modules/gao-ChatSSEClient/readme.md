@@ -51,7 +51,9 @@ const errorCore = (err) => {
 }
 const messageCore = (msg) => {
   console.log("message sse：", msg);
-  responseText.value += `${msg}\n`
+  responseText.value += `${msg.data}
+
+  `
 }
 const finishCore = () => {
   console.log("finish sse")
