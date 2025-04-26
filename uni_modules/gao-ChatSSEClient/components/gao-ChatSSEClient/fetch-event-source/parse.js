@@ -63,7 +63,7 @@ export function getMessages(onId, onRetry, onMessage) {
     let message = newMessage();
     let decoder;
 
-    // #ifdef MP-WEIXIN
+    // #ifdef MP-WEIXIN || MP-ALIPAY
     decoder = {
         decode(arraybuffer) {
             return decodeURIComponent(escape(String.fromCharCode(...arraybuffer)))
@@ -125,4 +125,3 @@ function newMessage() {
         retry: undefined,
     };
 }
-//# sourceMappingURL=parse.js.map

@@ -86,4 +86,3 @@ function defaultOnOpen(response) {
         throw new Error(`Expected content-type to be ${EventStreamContentType}, Actual: ${contentType}`);
     }
 }
-//# sourceMappingURL=fetch.js.map

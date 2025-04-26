@@ -1,5 +1,5 @@
 <template>
-  <!--  #ifdef MP-WEIXIN-->
+  <!--  #ifdef MP-WEIXIN || MP-ALIPAY -->
   <ChatWxApplet
     ref="chatRef"
     @onInnerOpen="open"
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-// #ifdef MP-WEIXIN
+// #ifdef MP-WEIXIN || MP-ALIPAY
 import ChatWxApplet from "./children/ChatWxApplet.vue";
 // #endif
 
@@ -31,7 +31,7 @@ import ChatAppAndWeb from "./children/ChatAppAndWeb.vue";
 
 export default {
   components: {
-    // #ifdef MP-WEIXIN
+    // #ifdef MP-WEIXIN || MP-ALIPAY
     ChatWxApplet,
     // #endif
 
