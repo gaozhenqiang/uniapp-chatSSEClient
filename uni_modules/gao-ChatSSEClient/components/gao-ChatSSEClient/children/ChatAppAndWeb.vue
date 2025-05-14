@@ -61,6 +61,8 @@ export default {
         const val = obj[key];
         if (typeof val === "string" || typeof val === 'number' || typeof val === 'boolean') {
           json[key] = val;
+        } else {
+          json[key] = val.toString();
         }
       }
       return json;

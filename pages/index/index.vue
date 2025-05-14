@@ -59,18 +59,19 @@ const start = () => {
      * 如果使用 sse-server.js 要在手机端使用的话，请确保你的手机和电脑处在一个局域网下并且是正常的ip地址
      */
     url: import.meta.env.VITE_CHAT_URL || 'http://localhost:3000/sse',
+    //url: 'http://127.0.0.1:3000/sse',
     // 请求头
     headers: {
       Authorization: import.meta.env.VITE_CHAT_AUTHORIZATION,
     },
     // 默认为 post
-    method: 'post',
-    body: {
-      "stream":true,
-      "model": "deepseek-chat",
-      "messages": [
-        {"role": "system", "content": "你是来自艺咖科技的数字员工，你的名字叫小咖。"}]
-    }
+    method: 'get',
+    //body: {
+    //  "stream":true,
+    //  "model": "deepseek-chat",
+    //  "messages": [
+    //    {"role": "system", "content": "你是来自艺咖科技的数字员工，你的名字叫小咖。"}]
+    //}
   })
 }
 const stop = () => {
