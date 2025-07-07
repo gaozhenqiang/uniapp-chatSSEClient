@@ -19,8 +19,10 @@ const HEARTBEAT_TIMEOUT = 120000; // 2分钟心跳超时
 const MAX_RETRY_COUNT = 5; // 最大重试次数
 const RETRY_BACKOFF_MULTIPLIER = 1.5; // 重试退避倍数
 
-export function fetchEventSource(input, _a) {
+export function fetchEventSource(input, _a, extend) {
     var { signal: inputSignal, headers: inputHeaders, onopen: inputOnOpen, onmessage, onclose, onerror, openWhenHidden, fetch: inputFetch, timeout = DEFAULT_TIMEOUT, heartbeatTimeout = HEARTBEAT_TIMEOUT } = _a, rest = __rest(_a, ["signal", "headers", "onopen", "onmessage", "onclose", "onerror", "openWhenHidden", "fetch", "timeout", "heartbeatTimeout"]);
+    const { maxRetryCount = MAX_RETRY_COUNT } = extend;
+
     return new Promise((resolve, reject) => {
         const headers = Object.assign({}, inputHeaders);
         if (!headers.accept) {
@@ -82,7 +84,7 @@ export function fetchEventSource(input, _a) {
                 curRequestController.abort();
             }, timeout);
             try {
-                console.log(`🔄 开始SSE连接，重试次数: ${retryCount}/${MAX_RETRY_COUNT}`);
+                console.log(`🔄 开始SSE连接，重试次数: ${retryCount}/${maxRetryCount}`);
                 const response = await fetch(input, Object.assign(Object.assign({}, rest), { 
                     headers, 
                     signal: curRequestController.signal 
@@ -90,7 +92,6 @@ export function fetchEventSource(input, _a) {
                 // 清除超时定时器
                 window.clearTimeout(timeoutId);
                 await onopen(response);
-                console.log('✅ SSE连接建立成功');
                 // 重置重试计数器
                 retryCount = 0;
                 // 启动心跳监控
@@ -114,7 +115,6 @@ export function fetchEventSource(input, _a) {
                         onmessage(message);
                     }
                 })));
-                console.log('✅ SSE连接正常结束');
                 onclose === null || onclose === void 0 ? void 0 : onclose();
                 dispose();
                 resolve();
@@ -126,7 +126,7 @@ export function fetchEventSource(input, _a) {
                     console.error(`❌ SSE连接错误 (第${retryCount + 1}次):`, err);
                     try {
                         // 检查是否应该重试
-                        if (retryCount < MAX_RETRY_COUNT) {
+                        if (retryCount < maxRetryCount) {
                             retryCount++;
                             // 计算退避延迟
                             const backoffDelay = retryInterval * Math.pow(RETRY_BACKOFF_MULTIPLIER, retryCount - 1);
@@ -137,7 +137,7 @@ export function fetchEventSource(input, _a) {
                         } else {
                             console.error('❌ 达到最大重试次数，停止重试');
                             dispose();
-                            reject(new Error(`SSE连接失败，已重试${MAX_RETRY_COUNT}次: ${err.message}`));
+                            reject(new Error(`SSE连接失败，已重试${maxRetryCount}次: ${err.message}`));
                         }
                     } catch (innerErr) {
                         console.error('❌ 错误处理过程中发生异常:', innerErr);

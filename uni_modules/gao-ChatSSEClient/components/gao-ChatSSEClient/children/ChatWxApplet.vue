@@ -21,10 +21,6 @@ export default {
       requestTask.abort();
     },
 
-    decode(data) {
-      return decodeURIComponent(escape(String.fromCharCode(...data)));
-    },
-
     /**
      * 开始chat对话
      * @param body
@@ -43,7 +39,12 @@ export default {
         data: body,
         enableChunked: true,
         responseType: 'arraybuffer',
-        success: (res) => {},
+        success: (res) => {
+          if (!res) return;
+          if (res.data instanceof ArrayBuffer) {
+            this.listener(res);
+          }
+        },
         fail: (error) => {
           this.$emit("onInnerError", error)
         },

@@ -66,7 +66,6 @@ export default {
     },
     error(...args) {
       this.$emit("onInnerError", ...args)
-      this.stopChat();
     },
     finish() {
       this.$emit("onInnerFinish")
@@ -108,15 +107,10 @@ export default {
 		/**
 		 * 开始对话
 		 */
-		startChatCore({ url, body, headers, method, timeout, heartbeatTimeout, maxRetryCount }) {
+		startChatCore(data) {
+		  const { url, body, headers, method, timeout, heartbeatTimeout, maxRetryCount } = data;
 			if (!url) return;
-			
-			console.log('🚀 启动SSE连接，配置信息:', { 
-				url, 
-				timeout, 
-				heartbeatTimeout, 
-				maxRetryCount 
-			});
+			console.log(data)
 			
 			try {
 				this.ctrl = new AbortController();
@@ -127,19 +121,17 @@ export default {
 						method,
 						openWhenHidden: true,
 						signal: this.ctrl.signal,
-						timeout: timeout || 300000, // 默认5分钟
-						heartbeatTimeout: heartbeatTimeout || 120000, // 默认2分钟
+						timeout: timeout || 300000,
+						heartbeatTimeout: heartbeatTimeout || 120000,
 						headers: {
 							"Content-Type": "application/json",
 							...headers,
 						},
 						body: body ? body : undefined,
 						onopen: (response) => {
-							console.log('📡 SSE连接已打开');
 							this.$ownerInstance.callMethod('open', this.objToJson(response));
 						},
 						onmessage: (data) => {
-							console.log('📨 收到SSE消息');
 							this.$ownerInstance.callMethod('message', data);
 						},
 						onerror: (err) => {
@@ -147,8 +139,9 @@ export default {
 							this.$ownerInstance.callMethod('error', JSON.stringify(err));
 							return 3000; // 3秒后重试
 						},
-					}).then(() => {
-						console.log('✅ SSE连接完成');
+					}, {
+            maxRetryCount,
+          }).then(() => {
 						this.$ownerInstance.callMethod('finish');
 					}).catch(err => {
 						console.error('💥 SSE连接异常:', err);

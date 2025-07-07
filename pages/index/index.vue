@@ -65,13 +65,13 @@ const start = () => {
       Authorization: import.meta.env.VITE_CHAT_AUTHORIZATION,
     },
     // 默认为 post
-    method: 'get',
-    //body: {
-    //  "stream":true,
-    //  "model": "deepseek-chat",
-    //  "messages": [
-    //    {"role": "system", "content": "你是来自艺咖科技的数字员工，你的名字叫小咖。"}]
-    //}
+    method: 'post',
+    body: {
+      "stream":true,
+      "model": "deepseek-chat",
+      "messages": [
+        {"role": "system", "content": "你是来自艺咖科技的数字员工，你的名字叫小咖。"}]
+    }
   })
 }
 const stop = () => {

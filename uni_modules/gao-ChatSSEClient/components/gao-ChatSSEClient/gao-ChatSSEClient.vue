@@ -16,6 +16,9 @@
     @onInnerError="error"
     @onInnerMessage="message"
     @onInnerFinish="finish"
+    :timeout="timeout"
+    :heartbeatTimeout="heartbeatTimeout"
+    :maxRetryCount="maxRetryCount"
   />
   <!--  #endif-->
 </template>
@@ -38,6 +41,25 @@ export default {
     // #ifdef APP-PLUS || H5
     ChatAppAndWeb,
     // #endif
+  },
+
+  props: {
+    // 请求超时时间，单位毫秒
+    timeout: {
+      type: Number,
+      default: 300000
+    },
+    // 心跳超时时间，单位毫秒
+    // 此参数保证客户端和SSE服务器之间的连接活跃。如果在 heartbeatTimeout 毫秒（比如 120000ms = 2分钟）内，没有收到任何数据或消息，就说明连接可能已经“挂掉”或服务器无响应，这时会主动断开连接并尝试重连。
+    heartbeatTimeout: {
+      type: Number,
+      default: 120000
+    },
+    // 最大重试次数
+    maxRetryCount: {
+      type: Number,
+      default: 5
+    }
   },
 
   methods: {
