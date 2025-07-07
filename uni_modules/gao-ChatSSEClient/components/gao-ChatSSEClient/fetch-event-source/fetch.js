@@ -13,14 +13,23 @@ import { getBytes, getLines, getMessages } from './parse';
 export const EventStreamContentType = 'text/event-stream';
 const DefaultRetryInterval = 1000;
 const LastEventId = 'last-event-id';
+// 新增配置常量
+const DEFAULT_TIMEOUT = 300000; // 5分钟超时
+const HEARTBEAT_TIMEOUT = 120000; // 2分钟心跳超时
+const MAX_RETRY_COUNT = 5; // 最大重试次数
+const RETRY_BACKOFF_MULTIPLIER = 1.5; // 重试退避倍数
+
 export function fetchEventSource(input, _a) {
-    var { signal: inputSignal, headers: inputHeaders, onopen: inputOnOpen, onmessage, onclose, onerror, openWhenHidden, fetch: inputFetch } = _a, rest = __rest(_a, ["signal", "headers", "onopen", "onmessage", "onclose", "onerror", "openWhenHidden", "fetch"]);
+    var { signal: inputSignal, headers: inputHeaders, onopen: inputOnOpen, onmessage, onclose, onerror, openWhenHidden, fetch: inputFetch, timeout = DEFAULT_TIMEOUT, heartbeatTimeout = HEARTBEAT_TIMEOUT } = _a, rest = __rest(_a, ["signal", "headers", "onopen", "onmessage", "onclose", "onerror", "openWhenHidden", "fetch", "timeout", "heartbeatTimeout"]);
     return new Promise((resolve, reject) => {
         const headers = Object.assign({}, inputHeaders);
         if (!headers.accept) {
             headers.accept = EventStreamContentType;
         }
         let curRequestController;
+        let retryCount = 0; // 重试计数器
+        let heartbeatTimer = null; // 心跳定时器
+        let lastDataTime = Date.now(); // 最后接收数据的时间
         function onVisibilityChange() {
             curRequestController.abort();
             if (!document.hidden) {
@@ -35,7 +44,28 @@ export function fetchEventSource(input, _a) {
         function dispose() {
             document.removeEventListener('visibilitychange', onVisibilityChange);
             window.clearTimeout(retryTimer);
+            clearHeartbeatTimer();
             curRequestController.abort();
+        }
+        
+        // 清理心跳定时器
+        function clearHeartbeatTimer() {
+            if (heartbeatTimer) {
+                window.clearTimeout(heartbeatTimer);
+                heartbeatTimer = null;
+            }
+        }
+        
+        // 重置心跳定时器
+        function resetHeartbeatTimer() {
+            clearHeartbeatTimer();
+            lastDataTime = Date.now();
+            heartbeatTimer = window.setTimeout(() => {
+                console.warn('💔 SSE心跳超时，主动断开连接重连');
+                curRequestController.abort();
+                // 延迟重连，避免频繁重连
+                retryTimer = window.setTimeout(create, 2000);
+            }, heartbeatTimeout);
         }
         inputSignal === null || inputSignal === void 0 ? void 0 : inputSignal.addEventListener('abort', () => {
             dispose();
@@ -46,10 +76,28 @@ export function fetchEventSource(input, _a) {
         async function create() {
             var _a;
             curRequestController = new AbortController();
+            // 设置超时控制
+            const timeoutId = window.setTimeout(() => {
+                console.warn('⏰ SSE请求超时，主动断开连接');
+                curRequestController.abort();
+            }, timeout);
             try {
-                const response = await fetch(input, Object.assign(Object.assign({}, rest), { headers, signal: curRequestController.signal }));
+                console.log(`🔄 开始SSE连接，重试次数: ${retryCount}/${MAX_RETRY_COUNT}`);
+                const response = await fetch(input, Object.assign(Object.assign({}, rest), { 
+                    headers, 
+                    signal: curRequestController.signal 
+                }));
+                // 清除超时定时器
+                window.clearTimeout(timeoutId);
                 await onopen(response);
+                console.log('✅ SSE连接建立成功');
+                // 重置重试计数器
+                retryCount = 0;
+                // 启动心跳监控
+                resetHeartbeatTimer();
                 await getBytes(response.body, getLines(getMessages(id => {
+                    // 更新心跳
+                    resetHeartbeatTimer();
                     if (id) {
                         headers[LastEventId] = id;
                     }
@@ -58,25 +106,49 @@ export function fetchEventSource(input, _a) {
                     }
                 }, retry => {
                     retryInterval = retry;
-                }, onmessage)));
+                }, (message) => {
+                    // 每次收到消息都重置心跳
+                    resetHeartbeatTimer();
+                    // 调用原始的onmessage处理器
+                    if (onmessage) {
+                        onmessage(message);
+                    }
+                })));
+                console.log('✅ SSE连接正常结束');
                 onclose === null || onclose === void 0 ? void 0 : onclose();
                 dispose();
                 resolve();
-            }
-            catch (err) {
+            } catch (err) {
+                // 清除超时定时器
+                window.clearTimeout(timeoutId);
+                clearHeartbeatTimer();
                 if (!curRequestController.signal.aborted) {
+                    console.error(`❌ SSE连接错误 (第${retryCount + 1}次):`, err);
                     try {
-                        const interval = (_a = onerror === null || onerror === void 0 ? void 0 : onerror(err)) !== null && _a !== void 0 ? _a : retryInterval;
-                        window.clearTimeout(retryTimer);
-                        retryTimer = window.setTimeout(create, interval);
-                    }
-                    catch (innerErr) {
+                        // 检查是否应该重试
+                        if (retryCount < MAX_RETRY_COUNT) {
+                            retryCount++;
+                            // 计算退避延迟
+                            const backoffDelay = retryInterval * Math.pow(RETRY_BACKOFF_MULTIPLIER, retryCount - 1);
+                            const interval = (_a = onerror === null || onerror === void 0 ? void 0 : onerror(err)) !== null && _a !== void 0 ? _a : backoffDelay;
+                            console.log(`🔄 将在 ${interval}ms 后进行第${retryCount}次重试`);
+                            window.clearTimeout(retryTimer);
+                            retryTimer = window.setTimeout(create, interval);
+                        } else {
+                            console.error('❌ 达到最大重试次数，停止重试');
+                            dispose();
+                            reject(new Error(`SSE连接失败，已重试${MAX_RETRY_COUNT}次: ${err.message}`));
+                        }
+                    } catch (innerErr) {
+                        console.error('❌ 错误处理过程中发生异常:', innerErr);
                         dispose();
                         reject(innerErr);
                     }
+                } else {
+                    console.log('🛑 SSE连接被主动中止');
                 }
             }
-        }
+        }  
         create();
     });
 }

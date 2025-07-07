@@ -1,6 +1,19 @@
 <script>
 export default {
-  props: {},
+  props: {
+    timeout: {
+      type: Number,
+      default: 300000 // 5分钟
+    },
+    heartbeatTimeout: {
+      type: Number, 
+      default: 120000 // 2分钟
+    },
+    maxRetryCount: {
+      type: Number,
+      default: 5
+    }
+  },
   data() {
     return {
       stopCount: 0,
@@ -8,8 +21,22 @@ export default {
         url: "",
         key: 0,
         body: "",
-        method: ""
+        method: "",
+        timeout: this.timeout,
+        heartbeatTimeout: this.heartbeatTimeout,
+        maxRetryCount: this.maxRetryCount
       }
+    }
+  },
+  watch: {
+    timeout(newVal) {
+      this.renderjsData.timeout = newVal;
+    },
+    heartbeatTimeout(newVal) {
+      this.renderjsData.heartbeatTimeout = newVal;
+    },
+    maxRetryCount(newVal) {
+      this.renderjsData.maxRetryCount = newVal;
     }
   },
   methods: {
@@ -25,6 +52,9 @@ export default {
         key: this.renderjsData.key + 1,
         ...config,
         body: body ? JSON.stringify(body) : 0,
+        timeout: config.timeout || this.timeout,
+        heartbeatTimeout: config.heartbeatTimeout || this.heartbeatTimeout,
+        maxRetryCount: config.maxRetryCount || this.maxRetryCount
       });
     },
 
@@ -78,40 +108,54 @@ export default {
 		/**
 		 * 开始对话
 		 */
-		startChatCore({ url, body, headers, method }) {
+		startChatCore({ url, body, headers, method, timeout, heartbeatTimeout, maxRetryCount }) {
 			if (!url) return;
+			
+			console.log('🚀 启动SSE连接，配置信息:', { 
+				url, 
+				timeout, 
+				heartbeatTimeout, 
+				maxRetryCount 
+			});
+			
 			try {
 				this.ctrl = new AbortController();
 				fetchEventSource(
 					url,
 					{
-					readJson: true,
+						readJson: true,
 						method,
-            openWhenHidden: true,
+						openWhenHidden: true,
 						signal: this.ctrl.signal,
+						timeout: timeout || 300000, // 默认5分钟
+						heartbeatTimeout: heartbeatTimeout || 120000, // 默认2分钟
 						headers: {
 							"Content-Type": "application/json",
 							...headers,
 						},
 						body: body ? body : undefined,
 						onopen: (response) => {
+							console.log('📡 SSE连接已打开');
 							this.$ownerInstance.callMethod('open', this.objToJson(response));
 						},
 						onmessage: (data) => {
+							console.log('📨 收到SSE消息');
 							this.$ownerInstance.callMethod('message', data);
 						},
 						onerror: (err) => {
-              console.log(err)
+							console.error('❌ SSE连接错误:', err);
 							this.$ownerInstance.callMethod('error', JSON.stringify(err));
+							return 3000; // 3秒后重试
 						},
 					}).then(() => {
+						console.log('✅ SSE连接完成');
 						this.$ownerInstance.callMethod('finish');
-				}).catch(err => {
-          console.log(err)
-					this.$ownerInstance.callMethod('error', err);
-				})
+					}).catch(err => {
+						console.error('💥 SSE连接异常:', err);
+						this.$ownerInstance.callMethod('error', err);
+					})
 			} catch (e) {
-				console.log(e);
+				console.error('🚨 启动SSE连接时出现异常:', e);
 			}
 		}
 	}
