@@ -6,10 +6,13 @@
     @onInnerError="error"
     @onInnerMessage="message"
     @onInnerFinish="finish"
+    :timeout="timeout"
+    :heartbeatTimeout="heartbeatTimeout"
+    :maxRetryCount="maxRetryCount"
   />
   <!--  #endif-->
 
-  <!--  #ifdef APP-PLUS || H5-->
+  <!--  #ifdef APP-PLUS || H5 || APP-HARMONY  -->
   <ChatAppAndWeb
     ref="chatRef"
     @onInnerOpen="open"
@@ -28,7 +31,7 @@
 import ChatWxApplet from "./children/ChatWxApplet.vue";
 // #endif
 
-// #ifdef APP-PLUS || H5
+// #ifdef APP-PLUS || H5 || APP-HARMONY
 import ChatAppAndWeb from "./children/ChatAppAndWeb.vue";
 // #endif
 
@@ -38,7 +41,7 @@ export default {
     ChatWxApplet,
     // #endif
 
-    // #ifdef APP-PLUS || H5
+    // #ifdef APP-PLUS || H5 || APP-HARMONY
     ChatAppAndWeb,
     // #endif
   },

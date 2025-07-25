@@ -1,3 +1,5 @@
+import {DEFAULT_RETRY_INTERVAL, RETRY_BACKOFF_MULTIPLIER} from "../constant";
+
 var __rest = (this && this.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -11,13 +13,11 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 import { getBytes, getLines, getMessages } from './parse';
 export const EventStreamContentType = 'text/event-stream';
-const DefaultRetryInterval = 1000;
 const LastEventId = 'last-event-id';
 // 新增配置常量
 const DEFAULT_TIMEOUT = 300000; // 5分钟超时
 const HEARTBEAT_TIMEOUT = 120000; // 2分钟心跳超时
 const MAX_RETRY_COUNT = 5; // 最大重试次数
-const RETRY_BACKOFF_MULTIPLIER = 1.5; // 重试退避倍数
 
 export function fetchEventSource(input, _a, extend) {
     var { signal: inputSignal, headers: inputHeaders, onopen: inputOnOpen, onmessage, onclose, onerror, openWhenHidden, fetch: inputFetch, timeout = DEFAULT_TIMEOUT, heartbeatTimeout = HEARTBEAT_TIMEOUT } = _a, rest = __rest(_a, ["signal", "headers", "onopen", "onmessage", "onclose", "onerror", "openWhenHidden", "fetch", "timeout", "heartbeatTimeout"]);
@@ -41,7 +41,7 @@ export function fetchEventSource(input, _a, extend) {
         if (!openWhenHidden) {
             document.addEventListener('visibilitychange', onVisibilityChange);
         }
-        let retryInterval = DefaultRetryInterval;
+        let retryInterval = DEFAULT_RETRY_INTERVAL;
         let retryTimer = 0;
         function dispose() {
             document.removeEventListener('visibilitychange', onVisibilityChange);

@@ -1,3 +1,7 @@
+## 1.5.4（2025-07-26）
+微信小程序支持timeout、heartbeatTimeout、maxRetryCount参数
+## 1.5.3（2025-07-07）
+新增功能连接超时时间、心跳超时时间、最大重试次数配置，主要贡献者：@https://github.com/sxw66
 ## 1.5.2（2025-05-14）
 onOpen 和 onError 返回更多字段
 ## 1.5.1（2025-04-26）

@@ -3,15 +3,12 @@ export default {
   props: {
     timeout: {
       type: Number,
-      default: 300000 // 5分钟
     },
     heartbeatTimeout: {
       type: Number, 
-      default: 120000 // 2分钟
     },
     maxRetryCount: {
       type: Number,
-      default: 5
     }
   },
   data() {

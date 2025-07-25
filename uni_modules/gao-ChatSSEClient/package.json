@@ -2,7 +2,7 @@
     "id": "gao-ChatSSEClient",
     "name": "sse 客户端组件，支持兼容：v2、v3、安卓、ios、浏览器、微信小程序",
     "displayName": "sse 客户端组件，支持兼容：v2、v3、安卓、ios、浏览器、微信小程序",
-    "version": "1.5.2",
+    "version": "1.5.4",
     "description": "sse 客户端组件，支持兼容：v2、v3、安卓、ios、浏览器、微信小程序",
     "repository": "https://github.com/gaozhenqiang/uniapp-chatSSEClient",
     "keywords": [

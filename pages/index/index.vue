@@ -58,8 +58,8 @@ const start = () => {
      * 注意：
      * 如果使用 sse-server.js 要在手机端使用的话，请确保你的手机和电脑处在一个局域网下并且是正常的ip地址
      */
-    url: import.meta.env.VITE_CHAT_URL || 'http://localhost:3000/sse',
-    //url: 'http://127.0.0.1:3000/sse',
+    //url: import.meta.env.VITE_CHAT_URL || 'http://localhost:3000/sse',
+    url: 'http://127.0.0.1:3000/sse',
     // 请求头
     headers: {
       Authorization: import.meta.env.VITE_CHAT_AUTHORIZATION,
