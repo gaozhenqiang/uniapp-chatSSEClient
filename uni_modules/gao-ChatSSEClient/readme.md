@@ -103,14 +103,24 @@ uniapp插件地址：https://ext.dcloud.net.cn/plugin?id=20971
 | heartbeatTimeout | Number | 120000 | 心跳超时时间，单位毫秒（此参数保证客户端和SSE服务器之间的连接活跃。如果在 heartbeatTimeout 毫秒（比如 120000ms = 2分钟）内，没有收到任何数据或消息，就说明连接可能已经“挂掉”或服务器无响应，这时会主动断开连接并尝试重连。） | √   | √           | √     |
 | maxRetryCount    | Number | 5      | 最大重试次数      | √   | √           | √     |
 
+## 回调函数
+
+| 函数名 | 说明         |
+|-----|------------|
+|onRetryuUpperlimit| 重试次数上限后的回调 |
+|onOpen| sse连接打开回调  |
+|onError| sse发生错误回调  |
+|onMessage| sse接受消息回调  |
+|onFinish| sse结束回调    |
+
 ### 示例
 
 ```javascript
 <gao-ChatSSEClient
   :heartbeat-timeout="120000"
-  :timeout="300000"
-  :max-retry-count="5"
-/>
+:timeout="300000"
+:max-retry-count="5"
+  />
 ```
 
 # 温馨提示

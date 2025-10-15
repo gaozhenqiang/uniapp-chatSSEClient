@@ -20,7 +20,7 @@ const HEARTBEAT_TIMEOUT = 120000; // 2分钟心跳超时
 const MAX_RETRY_COUNT = 5; // 最大重试次数
 
 export function fetchEventSource(input, _a, extend) {
-    var { signal: inputSignal, headers: inputHeaders, onopen: inputOnOpen, onmessage, onclose, onerror, openWhenHidden, fetch: inputFetch, timeout = DEFAULT_TIMEOUT, heartbeatTimeout = HEARTBEAT_TIMEOUT } = _a, rest = __rest(_a, ["signal", "headers", "onopen", "onmessage", "onclose", "onerror", "openWhenHidden", "fetch", "timeout", "heartbeatTimeout"]);
+    var { signal: inputSignal, headers: inputHeaders, onopen: inputOnOpen, onmessage, onRetryuUpperlimit, onclose, onerror, openWhenHidden, fetch: inputFetch, timeout = DEFAULT_TIMEOUT, heartbeatTimeout = HEARTBEAT_TIMEOUT } = _a, rest = __rest(_a, ["signal", "headers", "onopen", "onmessage", "onclose", "onerror", "openWhenHidden", "fetch", "timeout", "heartbeatTimeout"]);
     const { maxRetryCount = MAX_RETRY_COUNT } = extend;
 
     return new Promise((resolve, reject) => {
@@ -136,6 +136,7 @@ export function fetchEventSource(input, _a, extend) {
                             retryTimer = window.setTimeout(create, interval);
                         } else {
                             console.error('❌ 达到最大重试次数，停止重试');
+                            onRetryuUpperlimit();
                             dispose();
                             reject(new Error(`SSE连接失败，已重试${maxRetryCount}次: ${err.message}`));
                         }

@@ -66,6 +66,9 @@ export default {
     },
     finish() {
       this.$emit("onInnerFinish")
+    },
+    onRetryuUpperlimit() {
+      this.$emit("onInnerRetryuUpperlimit")
     }
   },
 }
@@ -130,6 +133,9 @@ export default {
 						},
 						onmessage: (data) => {
 							this.$ownerInstance.callMethod('message', data);
+						},
+						onRetryuUpperlimit: () => {
+							this.$ownerInstance.callMethod('onRetryuUpperlimit');
 						},
 						onerror: (err) => {
 							console.error('❌ SSE连接错误:', err);

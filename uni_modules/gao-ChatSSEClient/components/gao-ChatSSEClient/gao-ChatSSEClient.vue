@@ -6,6 +6,7 @@
     @onInnerError="error"
     @onInnerMessage="message"
     @onInnerFinish="finish"
+    @onInnerRetryuUpperlimit="onRetryuUpperlimit"
     :timeout="timeout"
     :heartbeatTimeout="heartbeatTimeout"
     :maxRetryCount="maxRetryCount"
@@ -19,6 +20,7 @@
     @onInnerError="error"
     @onInnerMessage="message"
     @onInnerFinish="finish"
+    @onInnerRetryuUpperlimit="onRetryuUpperlimit"
     :timeout="timeout"
     :heartbeatTimeout="heartbeatTimeout"
     :maxRetryCount="maxRetryCount"
@@ -87,6 +89,9 @@ export default {
     },
     finish() {
       this.$emit("onFinish")
+    },
+    onRetryuUpperlimit() {
+      this.$emit("onRetryuUpperlimit")
     }
   },
 }

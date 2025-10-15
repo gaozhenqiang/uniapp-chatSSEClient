@@ -137,6 +137,7 @@ export default {
         }, backoffDelay);
       } else {
         console.error('❌ 达到最大重试次数，停止重试');
+        this.$emit("onInnerRetryuUpperlimit")
       }
     },
 
