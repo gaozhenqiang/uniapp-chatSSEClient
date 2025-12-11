@@ -89,6 +89,9 @@ export function fetchEventSource(input, _a, extend) {
                     headers, 
                     signal: curRequestController.signal 
                 }));
+                if (response.ok === false) {
+                    throw new Error(`服务器异常`);
+                }
                 // 清除超时定时器
                 window.clearTimeout(timeoutId);
                 await onopen(response);

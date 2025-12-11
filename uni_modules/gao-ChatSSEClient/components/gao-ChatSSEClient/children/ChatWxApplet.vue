@@ -19,6 +19,7 @@ export default {
       retryCount: 0,
       // 是否失败
       isFailed: false,
+      manuallyStopped: false, // 新增: 是否为手动停止
     }
   },
   mounted() {
@@ -38,14 +39,21 @@ export default {
     },
 
     /**
-     * 停止聊天，清理资源
+     * 内部停止(不标记手动), 用于超时/心跳异常等场景
      */
-    stopChat() {
+    internalStopChat() {
       this.clearTimers();
       if (this.requestTask) {
-        this.requestTask.offChunkReceived(this.listener)
+        this.requestTask.offChunkReceived(this.listener);
         this.requestTask.abort();
       }
+    },
+    /**
+     * 停止聊天(手动), 不触发重试
+     */
+    stopChat() {
+      this.manuallyStopped = true;
+      this.internalStopChat();
     },
 
     /**
@@ -54,21 +62,23 @@ export default {
     startChat({ body, url, headers, method }) {
       this.clearTimers();
       this.retryCount = 0;
+      this.manuallyStopped = false; // 重置手动停止标记
       this.doRequest({ body, url, headers, method });
     },
 
     /**
      * 执行请求并处理超时、心跳等
      */
-    doRequest({ body, url, headers, method }) {
+    doRequest({body, url, headers, method}) {
       console.log(`🔄 开始SSE连接，重试次数: ${this.retryCount}/${this.maxRetryCount}`);
       this.isFailed = false;
+      this.manuallyStopped = false; // 每次真正发起请求前重置
 
       // 设置请求超时
       if (this.timeout) {
         this.timeoutTimer = setTimeout(() => {
-          this.stopChat();
-          this.retry({ body, url, headers, method });
+          this.internalStopChat(); // 改为内部停止
+          this.retry({body, url, headers, method});
           console.warn('⏰ SSE请求超时，主动断开连接');
         }, this.timeout);
       }
@@ -90,8 +100,9 @@ export default {
           }
         },
         fail: (error) => {
-          this.$emit("onInnerError", error)
-          this.retry({ body, url, headers, method });
+          if (this.manuallyStopped) return; // 手动停止时不重试不报错
+          this.$emit("onInnerError", error);
+          this.retry({body, url, headers, method});
           this.isFailed = true;
         },
         complete: () => {
@@ -107,7 +118,7 @@ export default {
 
       // 设置心跳超时
       if (this.heartbeatTimeout) {
-        this.resetHeartbeat({ body, url, headers, method });
+        this.resetHeartbeat({body, url, headers, method});
       }
     },
 
@@ -118,8 +129,8 @@ export default {
       if (this.heartbeatTimer) clearTimeout(this.heartbeatTimer);
       this.heartbeatTimer = setTimeout(() => {
         console.warn('💔 SSE心跳超时，主动断开连接重连');
-        this.stopChat();
-        this.$emit("onInnerError", { message: "心跳超时" });
+        this.internalStopChat(); // 改为内部停止
+        this.$emit("onInnerError", {message: "心跳超时"});
         this.retry(params);
       }, this.heartbeatTimeout);
     },
@@ -128,6 +139,10 @@ export default {
      * 重试
      */
     retry(params) {
+      if (this.manuallyStopped) {
+        console.log('⏸️ 已手动停止，不再重试');
+        return;
+      }
       if (this.retryCount < this.maxRetryCount) {
         this.retryCount++;
         const backoffDelay = DEFAULT_RETRY_INTERVAL * Math.pow(RETRY_BACKOFF_MULTIPLIER, this.retryCount - 1);
@@ -144,13 +159,13 @@ export default {
     /**
      * 数据监听回调，收到数据时重置心跳
      */
-    listener({ data }) {
+    listener({data}) {
       // 收到数据，重置心跳
       if (this.heartbeatTimeout) {
         this.resetHeartbeat(arguments[0]);
       }
       const type = Object.prototype.toString.call(data);
-      if (type ==="[object Uint8Array]") {
+      if (type === "[object Uint8Array]") {
       } else if (data instanceof ArrayBuffer) {
         data = new Uint8Array(data);
       }
@@ -161,5 +176,5 @@ export default {
 </script>
 
 <template>
-  <view />
+  <view/>
 </template>

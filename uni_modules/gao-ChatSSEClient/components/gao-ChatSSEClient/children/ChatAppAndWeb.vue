@@ -56,7 +56,7 @@ export default {
     },
 
     open(...args) {
-      this.$emit("onInnerOpen", ...args)
+      return this.$emit("onInnerOpen", ...args)
     },
     message(msg) {
       this.$emit("onInnerMessage", msg)
